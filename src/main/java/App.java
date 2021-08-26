@@ -11,6 +11,13 @@ import com.google.gson.Gson;
 import static spark.Spark.port;
 
 public class App {
+    static int getHerokuAssignedPort() {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get("PORT") != null) {
+            return Integer.parseInt(processBuilder.environment().get("PORT"));
+        }
+        return 4567; //return default port if heroku-port isn't set (i.e. on localhost)
+    }
     public static void main(String[] args) {
         Sql2oDeptDao deptDao = new Sql2oDeptDao();
         Sql2oUserDao userDao = new Sql2oUserDao();
@@ -20,15 +27,8 @@ public class App {
 
 
         /*-----------heroku section------------*/
-        ProcessBuilder process = new ProcessBuilder();
-        int port;
-
-        if (process.environment().get("PORT") != null) {
-            port = Integer.parseInt(process.environment().get("PORT"));
-        } else {
-            port = 4567;
-        }
-        port(port);
+        port(getHerokuAssignedPort());
+        staticFileLocation("/public");
 
         /*-----------------DEPARTMENT-------------------*/
         get("/departments","application/json",(request, response) -> gson.toJson(deptDao.allDepartments()));
