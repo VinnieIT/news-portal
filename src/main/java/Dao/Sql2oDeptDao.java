@@ -14,11 +14,11 @@ public class Sql2oDeptDao implements DeptDao{
 
     @Override
     public void add(Department department) {
-        String sql = "INSERT INTO departments (name,description,totalemployees) VALUES (:name,:description,:totalemployees)";
+        String sql = "INSERT INTO departments (dept_name,dept_description,dept_totalemployees) VALUES ( :dept_name,:dept_description,:dept_totalemployees)";
         try (Connection con = DB.sql2o.open()) {
             int id = (int) con.createQuery(sql,true)
                     .bind(department)
-                    .addParameter("totalemployees",department.getDept_totalEmployees())
+                    .addParameter("dept_totalemployees",department.getDept_totalEmployees())
                     .executeUpdate()
                     .getKey();
             department.setId(id);
@@ -130,7 +130,7 @@ public class Sql2oDeptDao implements DeptDao{
                     .addParameter("deptid", department.getId())
                     .addParameter("userid", user.getId())
                     .executeUpdate();
-            user.getUser_department("None");
+            user.setUser_department("None");
             department.subtractTotalEmployees();
             updateEmployeeCount(department);
         } catch (Sql2oException ex){
@@ -163,10 +163,10 @@ public class Sql2oDeptDao implements DeptDao{
 
     @Override
     public void updateEmployeeCount(Department department) {
-        String sql = "UPDATE departments SET totalemployees = :totalemployees WHERE id = :id";
+        String sql = "UPDATE departments SET dept_totalemployees = :dept_totalemployees WHERE id = :id";
         try (Connection con = DB.sql2o.open()) {
             con.createQuery(sql)
-                    .addParameter("totalemployees",department.getDept_totalEmployees())
+                    .addParameter("dept_totalemployees",department.getDept_totalEmployees())
                     .addParameter("id",department.getId())
                     .executeUpdate();
         } catch (Sql2oException ex) {

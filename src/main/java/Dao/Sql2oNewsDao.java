@@ -95,7 +95,7 @@ public class Sql2oNewsDao implements NewsDao {
             }
     }
     public String confirmDepartments(String deptName) {
-        String sqlquery = "SELECT name FROM departments";
+        String sqlquery = "SELECT dept_name FROM departments";
         try (Connection con = DB.sql2o.open()) {
             List<String> namesFound = con.createQuery(sqlquery).executeAndFetch(String.class);
             if (deptName.equalsIgnoreCase("general")) {
