@@ -1,14 +1,13 @@
 import Dao.SQL2oSitemapDao;
-import models.*;
-import static spark.Spark.*;
-
 import Dao.Sql2oDeptDao;
 import Dao.Sql2oNewsDao;
-import Dao.SQL2oSitemapDao;
 import Dao.Sql2oUserDao;
 import com.google.gson.Gson;
+import models.Department;
+import models.News;
+import models.User;
 
-import static spark.Spark.port;
+import static spark.Spark.*;
 
 public class App {
     static int getHerokuAssignedPort() {
@@ -26,11 +25,12 @@ public class App {
         Gson gson = new Gson();
 
 
-        /*-----------heroku section------------*/
+        //heroku section
         port(getHerokuAssignedPort());
         staticFileLocation("/public");
 
-        /*-----------------DEPARTMENT-------------------*/
+
+        // Departments
         get("/departments","application/json",(request, response) -> gson.toJson(deptDao.allDepartments()));
 
         post("/departments/new","application/json",(request, response) -> {
@@ -114,10 +114,10 @@ public class App {
             int deptId = Integer.parseInt(request.params("deptId"));
             return gson.toJson(deptDao.allDepartmentNews(deptId));
         });
-        /*-----------------END DEPARTMENT-------------------*/
 
 
-        /*-----------------USERS-------------------*/
+
+        // Users
         get("/users","application/json",(request, response) -> gson.toJson(userDao.allUsers()));
 
         get("/users/:userId/details","application/json",(request, response) -> {
@@ -152,10 +152,10 @@ public class App {
                 return "{\"Error 404!\":\"User not found. News cannot be posted without an actual user as the author\"}";
             }
         });
-        /*-----------------END USERS-------------------*/
 
 
-        /*-----------------NEWS-------------------*/
+
+       // News
         get("/news","application/json",(request, response) -> gson.toJson(newsDao.allNews()));
         get("/news/general","application/json",(request, response) -> gson.toJson(newsDao.allGeneralNews()));
         get("/news/departments","application/json",(request, response) -> gson.toJson(newsDao.allDepartmentalNews()));
@@ -163,7 +163,7 @@ public class App {
             int newsId = Integer.parseInt(request.params("newsId"));
             return gson.toJson(newsDao.findById(newsId));
         });
-        /*-----------------END NEWS-------------------*/
+
 
         get("/sitemap","application/json",(request, response) ->{
             return gson.toJson(sitemapDao.allPaths());
